@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Klemens Arndt, Maximilian Hoppe, Daniel Henneberg
+// Klemens Arndt, Maximilian Hoppe, Daniel Henneberg blabla
 
 int main(void) {
 
