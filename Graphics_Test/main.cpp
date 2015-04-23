@@ -6,12 +6,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Klemens Arndt, Maximilian Hoppe, Daniel Henneberg blabla
+// Klemens Arndt, Maximilian Hoppe, Daniel Henneberg
 
 int main(void) {
 
 	printf("zeit das fenster zu verändern\n"); system("PAUSE"); 
 	//printTable();
+	//system("PAUSE");
+
 	//CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 	//SMALL_RECT srctWindow;
 
@@ -29,15 +31,18 @@ int main(void) {
 
 	//ConsoleGraphics bla = ConsoleGraphics::ConsoleGraphics(breite, hoehe);
 
-	ConsoleGraphics* bla = new ConsoleGraphics; bla->clear();
+	ConsoleGraphics* bla = new ConsoleGraphics; 
+	bla->clear();
 
 	/*for (int i = 0; i <= breite * hoehe; i++) {
 		bla.bitline[i] = 0x21;
 	}*/
-	for (int i = 0; i < (bla->breite + 1) * bla->hoehe; i++) {
-		printf("%c", 0x21);
+	for (int i = 0; i < bla->breite; i++) {
+		for (int i = 0; i < bla->hoehe; i++) {
+			printf("%c", 0x21);
+		}
 	}
-
+	system("PAUSE");
 
 	bla->clear();
 

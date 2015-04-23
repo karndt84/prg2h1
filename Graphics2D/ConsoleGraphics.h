@@ -16,7 +16,7 @@ public:
 	void clear();
 
 //private:
-	int *bitline;
+	int **bitline;
 	int breite, hoehe;
 private:
 	void initConsole();

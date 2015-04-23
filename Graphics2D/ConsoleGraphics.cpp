@@ -6,17 +6,29 @@
 ConsoleGraphics::ConsoleGraphics()
 {
 	initConsole();
-	bitline = new int[(breite +1) * hoehe];
-	for (int i = 0; i < breite * hoehe; i++) {
-		this->bitline[i] = 0x20;
+	bitline = new int*[breite]; // Erstes Array initialisieren
+
+	for (int i = 0; i < breite; i++)
+	{
+		bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
+		for (int j = 0; j < hoehe; j++) {
+			this->bitline[i][j] = '0x20';
+		}
 	}
 }
 
 ConsoleGraphics::ConsoleGraphics(int breite, int hoehe)
 {
-	bitline = new int[(breite) * hoehe];
+	/*bitline = new int[(breite) * hoehe];
 	for (int i = 0; i < breite * hoehe; i++) {
 		this->bitline[i] = '0x20';
+	}
+	*/
+	bitline = new int*[breite]; // Erstes Array initialisieren
+
+	for (int i = 0; i < breite; i++)
+	{
+		bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
 	}
 }
 
@@ -35,9 +47,9 @@ void ConsoleGraphics::initConsole() {
 	}
 
 	srctWindow = csbiInfo.srWindow;
-
-	this->breite = srctWindow.Right;
-	this->hoehe = srctWindow.Bottom;
+	
+	this->breite = srctWindow.Right +1;
+	this->hoehe = srctWindow.Bottom +1;
 }
 
 void ConsoleGraphics::clear() {
