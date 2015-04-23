@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Klemens Arndt, Maximilian Hoppe, Daniel Henneberg
+
 int main(void) {
 
 	printf("zeit das fenster zu verändern\n"); system("PAUSE"); 
