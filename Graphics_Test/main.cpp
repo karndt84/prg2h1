@@ -42,6 +42,7 @@ int main(void) {
 			printf("%c", 0x21);
 		}
 	}
+	printf("Fenstergroesse: %ix%i\t", bla->breite, bla->hoehe);
 	system("PAUSE");
 
 	bla->clear();
@@ -49,7 +50,9 @@ int main(void) {
 	bla->drawPoint(1, 1);
 	bla->undrawPoint(1, 1);
 	system("PAUSE");
-
+	bla->clear();
+	bla->drawLine(2, 2, 75, 20);
+	system("PAUSE");
 	//bla.~ConsoleGraphics();
 	delete bla;
 

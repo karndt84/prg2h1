@@ -24,12 +24,16 @@ public:
 	int **bitline;
 	int breite, hoehe;
 private:
+	enum zeichen { EMPTY, UPPER, LOWER, FULL };
+	ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1);
+	bool drawPoint(int x, int y, ConsoleGraphics::zeichen z);
 	void initConsole();
 	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 	SMALL_RECT srctWindow;
 	HANDLE hStdout;
 
 	void jump2Pos(int x, int y);
+	void tausch(int* eins, int* zwei);
 
 };
 
