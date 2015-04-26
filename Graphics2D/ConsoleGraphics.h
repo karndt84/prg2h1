@@ -14,6 +14,11 @@ public:
 	ConsoleGraphics(int breite, int hoehe);
 	~ConsoleGraphics();	
 	void clear();
+	bool drawPoint(int x, int y);
+	bool undrawPoint(int x, int y);
+	bool drawLine(int x1, int y1, int x2, int y2);
+	bool drawRectangle(int x1, int y1, int x2, int y2);
+	bool printString(int x, int y, const char text[]);
 
 //private:
 	int **bitline;

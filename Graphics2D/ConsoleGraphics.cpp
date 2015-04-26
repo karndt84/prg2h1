@@ -68,3 +68,25 @@ void ConsoleGraphics::jump2Pos(int x, int y) {
 	SetConsoleCursorPosition(this->hStdout, coordDest);
 
 }
+
+bool ConsoleGraphics::drawPoint(int x, int y) {
+	COORD coordDest = { x, y };
+	SetConsoleCursorPosition(this->hStdout, coordDest);
+	printf("%c", 0xdb);
+	return 0;
+}
+bool ConsoleGraphics::undrawPoint(int x, int y) {
+	COORD coordDest = { x, y };
+	SetConsoleCursorPosition(this->hStdout, coordDest);
+	printf("%c", 0x20);
+	return 0;
+}
+bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
+	return 0;
+}
+bool ConsoleGraphics::drawRectangle(int x1, int y1, int x2, int y2) {
+	return 0;
+}
+bool ConsoleGraphics::printString(int x, int y, const char text[]) {
+	return 0;
+}

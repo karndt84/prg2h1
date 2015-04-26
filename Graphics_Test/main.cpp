@@ -11,8 +11,8 @@
 int main(void) {
 
 	printf("zeit das fenster zu verändern\n"); system("PAUSE"); 
-	//printTable();
-	//system("PAUSE");
+	printTable();
+	system("PAUSE");
 
 	//CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 	//SMALL_RECT srctWindow;
@@ -46,7 +46,9 @@ int main(void) {
 
 	bla->clear();
 
-	//system("PAUSE");
+	bla->drawPoint(1, 1);
+	bla->undrawPoint(1, 1);
+	system("PAUSE");
 
 	//bla.~ConsoleGraphics();
 	delete bla;
