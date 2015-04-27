@@ -91,10 +91,10 @@ bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
 ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1) {
 	double var = y1 - 0.5;
 	var = y1 - (int)var;
- 	if (y1 < 1.4) {
-		return UPPER;
-	} else if (y1 > 1.6) {
+ 	if (var < 1.0) {
 		return LOWER;
+	} else if (var > 1.0) {
+		return UPPER;
 	} else {
 		return FULL;
 	}
