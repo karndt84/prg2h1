@@ -37,21 +37,17 @@ int main(void) {
 	/*for (int i = 0; i <= breite * hoehe; i++) {
 		bla.bitline[i] = 0x21;
 	}*/
-	for (int i = 0; i < bla->breite; i++) {
-		for (int i = 0; i < bla->hoehe; i++) {
+	for (int i = 0; i <= bla->breite; i++) {
+		for (int i = 0; i <= bla->hoehe -1; i++) {
 			printf("%c", 0x21);
 		}
 	}
 	printf("Fenstergroesse: %ix%i\t", bla->breite, bla->hoehe);
 	system("PAUSE");
-
 	bla->clear();
+	bool error = bla->drawLine(2, 2, 79, 4);
+	error = bla->printString(77, 5, "test");
 
-	bla->drawPoint(1, 1);
-	bla->undrawPoint(1, 1);
-	system("PAUSE");
-	bla->clear();
-	bla->drawLine(2, 2, 75, 20);
 	system("PAUSE");
 	//bla.~ConsoleGraphics();
 	delete bla;

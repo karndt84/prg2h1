@@ -12,10 +12,12 @@ ConsoleGraphics::ConsoleGraphics()
 	{
 		bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
 		for (int j = 0; j < hoehe; j++) {
-			this->bitline[i][j] = '0x20';
+			this->bitline[i][j] = 0x20;
 		}
 	}
 }
+
+
 
 ConsoleGraphics::ConsoleGraphics(int breite, int hoehe)
 {
@@ -48,14 +50,16 @@ void ConsoleGraphics::initConsole() {
 
 	srctWindow = csbiInfo.srWindow;
 	
-	this->breite = srctWindow.Right +1;
-	this->hoehe = srctWindow.Bottom +1;
+	this->breite = srctWindow.Right ;
+	this->hoehe = srctWindow.Bottom ;
 }
 
 void ConsoleGraphics::clear() {
 	jump2Pos(0, 0);
-	for (int i = 0; i < (this->breite + 1) * this->hoehe; i++) {
-		printf("%c", 0x20);
+	for (int i = 0; i <= this->breite; i++) {
+		for (int i2 = 0; i2 <= this->hoehe -1; i2++) {
+			printf("%c", 0x20);
+		}
 	}
 	jump2Pos(0, 0);
 }
@@ -69,7 +73,19 @@ void ConsoleGraphics::jump2Pos(int x, int y) {
 
 }
 
+bool ConsoleGraphics::verifyCoord(int x, int y) {
+	
+	if (this->breite < x || this->hoehe < y) {
+		jump2Pos(0, this->hoehe);
+		printf("Error: coords %i,%i out of borders\t", x, y);
+		return false;
+	}
+	
+	return true;
+}
+
 bool ConsoleGraphics::drawPoint(int x, int y) {
+	if (!verifyCoord(x, y)) {	return false;	}
 	drawPoint(x, y, FULL);
 	return 0;
 }
@@ -82,7 +98,6 @@ bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
 		case UPPER: code = 0xdf; break;
 		case LOWER: code = 0xdc; break;
 		case FULL: code = 0xdb; break;
-		DEFAULT: code = 0x20; break;
 	}
 	printf("%c", code);
 	return 0;
@@ -112,23 +127,72 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 	*eins = tausch;
 }
 
-bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
-	double targetY;
-	(x1 > x2) ? tausch(&x1, &x2) : false;
-	(y1 > y2) ? tausch(&y1, &y2) : false;
+void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2) {
 
+	bool middleflag = false, aufwaerts = true;
+	int gap = y2 - y1, ix = 1;
+	if (gap < 0) { aufwaerts = false; }
+	if (gap % 2 != 0) { middleflag = true; gap -= 1; }
+
+	while (ix <= gap ) {
+		if (aufwaerts) {
+			drawPoint(x1, y1 + ix);
+			ix++;
+		} else {
+			drawPoint(x1, y1 - ix);
+			ix--;
+		}
+		if (ix == gap / 2 && middleflag) {
+			if (aufwaerts) {
+				drawPoint(x1, y1 + ix, LOWER);
+				ix++;
+				drawPoint(x1, y1 + ix, UPPER);
+				ix++;
+			} else {
+				drawPoint(x1, y1 - ix, UPPER);
+				ix--;
+				drawPoint(x1, y1 - ix, LOWER);
+				ix--;
+			}
+		}
+	}
+
+}
+
+bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
+	if (!verifyCoord(x1, y1)) { return false; }
+	if (!verifyCoord(x2, y2)) { return false; }
+	double targetY, prevY = y1;
+	if (x1 > x2) {
+		tausch(&x1, &x2);
+		tausch(&y1, &y2);
+	}
+	bool gap;
+	int vergleich;
 	double m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
-	for (double i = x1; i <= x2; i++) {
+	for (double i = x1; i <= x2; i++) { // x werte durchgehen und den y wert zeichnen
 		targetY = (m * (i - (double)x1) + (double)y1);
+		vergleich = (int)prevY - 1;
+		//(vergleich > (int)targetY) ? gap = true : gap = false;
+		//if (gap) { fillGap(i - 1, prevY, i, targetY); }
 		drawPoint(i, (int)targetY , decideCode(targetY));
+		//drawPoint(i, (int)targetY);
+		prevY = targetY;
 	}
 
 
-	return 0;
+	return true;
 }
 bool ConsoleGraphics::drawRectangle(int x1, int y1, int x2, int y2) {
-	return 0;
+	if (!verifyCoord(x1, y1)) { return false; }
+	if (!verifyCoord(x2, y2)) { return false; }
+
+	return true;
 }
 bool ConsoleGraphics::printString(int x, int y, const char text[]) {
-	return 0;
+	if (!verifyCoord(x + strlen(text), y)) { return false; }
+	jump2Pos(x, y);
+	printf("%s", text);
+
+	return true;
 }
