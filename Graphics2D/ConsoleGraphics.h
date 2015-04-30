@@ -35,7 +35,7 @@ private:
 	bool verifyCoord(int x, int y); // Fkt. zur Vermeidung des Zeichnesn ausserhalb des Konsolenfensters
 	void jump2Pos(int x, int y); // setzt den cursor an die stelle x,y
 	void tausch(int* eins, int* zwei); // Tauscht zwei übergebene int Variablen
-	void fillGap(int x1, int y1, int x2, int y2); // Füllt bei einer zu steilen Linie den Zwischenraum von x und x+1
+	void fillGap(int x1, int y1, int x2, int y2, double m); // Füllt bei einer zu steilen Linie den Zwischenraum von x und x+1
 
 };
 
