@@ -145,67 +145,49 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 }
 
 void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
-	bool aufwaerts = true;
-	int targetX, x = x1;
-	int actY = y1, actYreverse = y1, grenze = y2 +1;
-	if (m > 0) {
-		aufwaerts = true;
-	} else {
-		aufwaerts = false;
-		actYreverse = -actYreverse;
-		grenze = y2 - 1;
-	}
+	for (int x = 0; x <= x2 - x1; ++x)
+	{
+		int naechste = y1 + x * m;
+		int vorige;
+		if (x > 0) { // alle weiteren pixel
+			vorige = y1 + (x - 1) * m;
+			if (vorige < naechste)
+				vorige += 1;
+		} else // erster pixel
+			vorige = y1;
 
-	m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
-	m = m * 2;
-	while (!(actYreverse == grenze)) {
-		
-		if (m != 0) {
-			x = x1 + ((double)actY / m);
-		} else if (x1 == x2) {
-			if (aufwaerts)
-				actY += 1;
-			else
-				actY--;
+		if (m > 0) {
+			for (int y = vorige; y <= naechste; ++y) {
+				drawPoint(x1 + x, y);
+			}
 		} else {
-			x += 1;
+			for (int y = vorige; y >= naechste; --y) {
+				drawPoint(x1 + x, y);
+			}
 		}
 		
-		drawPoint(x, actY);
-
-		if (aufwaerts)
-			actY++;
-		else
-			actY--;
 	}
-	
 }
 
 bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
 	if (!verifyCoord(x1, y1)) { return false; }
 	if (!verifyCoord(x2, y2)) { return false; }
-	double targetY, prevY = y1;
+
 	if (x1 > x2) {
 		tausch(&x1, &x2);
 		tausch(&y1, &y2);
 	}
-	bool gap;
-	
-	double m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
-	for (double i = x1; i <= x2; i++) { // x werte durchgehen und den y wert zeichnen
-		targetY = (m * (i - (double)x1) + (double)y1);
-		
-		if (!(m > 1 || m < -1)) {
-			drawPoint(i, (int)targetY, decideCode(targetY));
-		} else if (x1 == x2) {
-			fillGap(i, prevY, i, y2, m);
-		} else {
-			fillGap(i - 1, prevY, i, targetY, m);
-		}
-		
-		prevY = targetY;
-	}
 
+	if (x1 == x2) {	// Horizontale Linie
+		if (y1 > y2) // immer von unten nach oben laufen
+			tausch(&y1, &y2);
+		for (int y = y1; y <= y2; ++y) {
+			drawPoint(x1, y);
+		}
+	} else {
+		double m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
+		fillGap(x1, y1, x2, y2, m);
+	}
 
 	return true;
 }

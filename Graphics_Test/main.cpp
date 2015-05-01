@@ -45,7 +45,7 @@ int main(void) {
 	//bla->drawLine(2, 2, 70, 10);
 	//bla->drawLine(0, 0, 0, 3);
 	//la->drawLine(0, 0, 3, 0);
-	bla->drawLine(0, 20 , 20, 0);
+	bla->drawLine(2, 23 , 8, 0);
 
 	//bool error = bla->drawLine(2, 2, 79, 4);
 	//error = bla->printString(77, 5, "test");
