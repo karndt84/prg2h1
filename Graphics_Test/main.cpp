@@ -42,14 +42,22 @@ int main(void) {
 	system("PAUSE");
 	bla->clearStatus();
 	bla->clear();
-	//bla->drawLine(2, 2, 70, 10);
-	//bla->drawLine(0, 0, 0, 3);
-	//la->drawLine(0, 0, 3, 0);
-	bla->drawLine(2, 23 , 8, 0);
+	/*
+	bla->drawRectangle(10, 10, 36, 23);
+	bla->drawLine(10, 10, 23, 1);
+	bla->drawLine(23, 1, 36, 10);
+	bla->drawLine(10, 10, 36, 23);
+	bla->drawLine(36, 10, 10, 23);
+	*/
 
-	//bool error = bla->drawLine(2, 2, 79, 4);
-	//error = bla->printString(77, 5, "test");
+	bla->drawRectangle(10, 10, 60, 50);
+	bla->drawLine(10, 10, 35, 1);
+	bla->drawLine(35, 1, 60, 10);
+	bla->drawLine(10, 10, 60, 50);
+	bla->drawLine(60, 10, 10, 50);
 
+		
+	bla->clearStatus();
 	system("PAUSE");
 	bla->clearStatus();
 	//bla.~ConsoleGraphics();

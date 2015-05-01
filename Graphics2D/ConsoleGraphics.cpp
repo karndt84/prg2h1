@@ -7,13 +7,13 @@ ConsoleGraphics::ConsoleGraphics()
 {
 	initConsole();
 	this->lastStatusChar = 0;
-	bitline = new int*[breite]; // Erstes Array initialisieren
+	this->bitline = new int*[breite +1]; // Erstes Array initialisieren
 
-	for (int i = 0; i < breite; i++)
+	for (int i = 0; i <= breite; i++)
 	{
-		bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
+		this->bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
 		for (int j = 0; j < hoehe; j++) {
-			this->bitline[i][j] = 0x20;
+			this->bitline[i][j] = EMPTY;
 		}
 	}
 }
@@ -102,12 +102,46 @@ bool ConsoleGraphics::verifyCoord(int x, int y) {
 }
 
 bool ConsoleGraphics::drawPoint(int x, int y) {
-	if (!verifyCoord(x, y)) {	return false;	}
 	drawPoint(x, y, FULL);
 	return 0;
 }
 
 bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
+	if (!verifyCoord(x, y))
+		return false;
+
+	switch (this->bitline[x][y]) // Keine bereits gezeichneten Zeichen überschreiben, ggf. ergänzen
+	{
+		case EMPTY:
+			if (z == EMPTY)
+				return true;
+			else
+				this->bitline[x][y] = z;
+			break;;
+		case LOWER:
+			if (z == LOWER)
+				return true;
+			else if (z == EMPTY)
+				this->bitline[x][y] = EMPTY;
+			else
+				this->bitline[x][y] = FULL;
+			break;;
+		case UPPER:
+			if (z == UPPER)
+				return true;
+			else if (z == EMPTY)
+				this->bitline[x][y] = EMPTY;
+			else
+				this->bitline[x][y] = FULL;
+			break;;
+		case FULL:
+			if (z == EMPTY)
+				this->bitline[x][y] = EMPTY;
+			else
+				return true;
+			break;;
+	}
+
 	int code = 0x20;
 	jump2Pos(x, y);
 	switch (z) {
@@ -117,7 +151,7 @@ bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
 		case FULL: code = 0xdb; break;
 	}
 	printf("%c", code);
-	return 0;
+	return true;
 }
 
 ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1) {
@@ -140,14 +174,16 @@ bool ConsoleGraphics::undrawPoint(int x, int y) {
 void ConsoleGraphics::tausch(int* eins, int* zwei) {
 	int tausch;
 	tausch = *eins;
-	*zwei = *eins;
-	*eins = tausch;
+	*eins = *zwei;
+	*zwei = tausch;
 }
 
 void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
-	for (int x = 0; x <= x2 - x1; ++x)
+	for (int x = 0; x <= x2 - x1; ++x) // x-Werte durchgehen
 	{
-		int yOben = y1 + x * m;
+		double yObenCode = y1 + x * m;
+		int yOben = (int)yObenCode;
+
 		int yUnten;
 		if (x > 0) { // alle weiteren pixel
 			yUnten = y1 + (x - 1) * m;
@@ -156,13 +192,19 @@ void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
 		} else // erster pixel
 			yUnten = y1;
 
-		if (m > 0) {
-			for (int y = yUnten; y <= yOben; ++y) {
-				drawPoint(x1 + x, y);
+		if (m > 0) { // Laufrichtung 
+			for (int y = yUnten; y <= yOben +1; ++y) {
+				if (y == yOben + 1 && x != x2 - x1)
+					drawPoint(x1 + x, y, UPPER);
+				else
+					drawPoint(x1 + x, y);
 			}
 		} else {
 			for (int y = yUnten; y >= yOben; --y) {
-				drawPoint(x1 + x, y);
+				if (y == yOben && m > 0)
+					drawPoint(x1 + x, y, LOWER);
+				else
+					drawPoint(x1 + x, y);
 			}
 		}
 		
@@ -178,7 +220,7 @@ bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
 		tausch(&y1, &y2);
 	}
 
-	if (x1 == x2) {	// Horizontale Linie
+	if (x1 == x2) {	// Vertikale Linie
 		if (y1 > y2) // immer von unten nach oben laufen
 			tausch(&y1, &y2);
 		for (int y = y1; y <= y2; ++y) {
@@ -195,6 +237,11 @@ bool ConsoleGraphics::drawRectangle(int x1, int y1, int x2, int y2) {
 	if (!verifyCoord(x1, y1)) { return false; }
 	if (!verifyCoord(x2, y2)) { return false; }
 
+	COORD coords[5] = { x1, y1, x2, y1, x2, y2, x1, y2, x1, y1 };
+	for (int i = 1; i < 5; i++) {
+		drawLine(coords[i -1 ].X, coords[i -1].Y, coords[i].X, coords[i].Y);
+	}
+	jump2Pos(this->hoehe, this->lastStatusChar);
 	return true;
 }
 bool ConsoleGraphics::printString(int x, int y, const char text[]) {
