@@ -127,36 +127,27 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 	*eins = tausch;
 }
 
-void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2) {
+void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
+	bool aufwaerts;
+	int targetX, x;
+	if (m > 0)
+		aufwaerts = true;
+	else
+		aufwaerts = false;
 
-	bool middleflag = false, aufwaerts = true;
-	int gap = y2 - y1, ix = 1;
-	if (gap < 0) { aufwaerts = false; }
-	if (gap % 2 != 0) { middleflag = true; gap -= 1; }
+	int actY = y1;
+	m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
+	m = m * 2;
+	while (!(actY == y2+1)) {
+		x =  x1+ ((double)actY / m);
+		drawPoint(x, actY);
 
-	while (ix <= gap ) {
-		if (aufwaerts) {
-			drawPoint(x1, y1 + ix);
-			ix++;
-		} else {
-			drawPoint(x1, y1 - ix);
-			ix--;
-		}
-		if (ix == gap / 2 && middleflag) {
-			if (aufwaerts) {
-				drawPoint(x1, y1 + ix, LOWER);
-				ix++;
-				drawPoint(x1, y1 + ix, UPPER);
-				ix++;
-			} else {
-				drawPoint(x1, y1 - ix, UPPER);
-				ix--;
-				drawPoint(x1, y1 - ix, LOWER);
-				ix--;
-			}
-		}
+		if (aufwaerts)
+			actY++;
+		else
+			actY--;
 	}
-
+	
 }
 
 bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
@@ -172,10 +163,18 @@ bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
 	double m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
 	for (double i = x1; i <= x2; i++) { // x werte durchgehen und den y wert zeichnen
 		targetY = (m * (i - (double)x1) + (double)y1);
-		vergleich = (int)prevY - 1;
-		//(vergleich > (int)targetY) ? gap = true : gap = false;
-		//if (gap) { fillGap(i - 1, prevY, i, targetY); }
-		drawPoint(i, (int)targetY , decideCode(targetY));
+		
+		if (m > 1 || m < -1) {
+			gap = true;
+		}
+		else {
+			gap = false;
+		}
+		if (gap)
+			fillGap(i - 1, prevY, i, targetY, m);
+		else
+			drawPoint(i, (int)targetY , decideCode(targetY));
+
 		//drawPoint(i, (int)targetY);
 		prevY = targetY;
 	}

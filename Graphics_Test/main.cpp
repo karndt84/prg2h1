@@ -45,8 +45,10 @@ int main(void) {
 	printf("Fenstergroesse: %ix%i\t", bla->breite, bla->hoehe);
 	system("PAUSE");
 	bla->clear();
-	bool error = bla->drawLine(2, 2, 79, 4);
-	error = bla->printString(77, 5, "test");
+	bla->drawLine(2, 2, 70, 10);
+	bla->drawLine(3, 3, 7,20);
+	//bool error = bla->drawLine(2, 2, 79, 4);
+	//error = bla->printString(77, 5, "test");
 
 	system("PAUSE");
 	//bla.~ConsoleGraphics();
