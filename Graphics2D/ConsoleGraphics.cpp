@@ -147,21 +147,21 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
 	for (int x = 0; x <= x2 - x1; ++x)
 	{
-		int naechste = y1 + x * m;
-		int vorige;
+		int yOben = y1 + x * m;
+		int yUnten;
 		if (x > 0) { // alle weiteren pixel
-			vorige = y1 + (x - 1) * m;
-			if (vorige < naechste)
-				vorige += 1;
+			yUnten = y1 + (x - 1) * m;
+			if (yUnten < yOben)
+				yUnten += 1;
 		} else // erster pixel
-			vorige = y1;
+			yUnten = y1;
 
 		if (m > 0) {
-			for (int y = vorige; y <= naechste; ++y) {
+			for (int y = yUnten; y <= yOben; ++y) {
 				drawPoint(x1 + x, y);
 			}
 		} else {
-			for (int y = vorige; y >= naechste; --y) {
+			for (int y = yUnten; y >= yOben; --y) {
 				drawPoint(x1 + x, y);
 			}
 		}
