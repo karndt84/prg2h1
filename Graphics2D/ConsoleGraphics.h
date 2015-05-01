@@ -20,9 +20,13 @@ public:
 	bool drawRectangle(int x1, int y1, int x2, int y2);
 	bool printString(int x, int y, const char text[]);
 
-//private:
-	int **bitline;
-	int breite, hoehe;
+	void printWindowSize(void); // Gibt die Größe des Fensters auf der Statuszeile aus
+
+
+private:
+	int **bitline; // Array zum abspeichern der schon gezeichneten Zeichens
+	int breite, hoehe; // Breite und Höhe des Fensters, letzte Zeile wird für status benutzt
+	int lastStatusChar; // Letzte Position auf der Zeile des aktuell angezeigten Status 
 private:
 	enum zeichen { EMPTY, UPPER, LOWER, FULL };
 	ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1);

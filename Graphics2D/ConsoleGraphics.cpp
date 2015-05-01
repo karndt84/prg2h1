@@ -61,7 +61,18 @@ void ConsoleGraphics::clear() {
 			printf("%c", 0x20);
 		}
 	}
-	jump2Pos(0, 0);
+	jump2Pos(this->lastStatusChar, this->hoehe);
+	for (int i = this->lastStatusChar; i > this->breite; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
+		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY); 
+	}
+}
+
+void ConsoleGraphics::printWindowSize(void) {
+	jump2Pos(0, this->hoehe);
+	printf("Fenstergroesse: %ix%i", this->breite, this->hoehe);
+	GetConsoleScreenBufferInfo(hStdout, &csbiInfo); // aktuellen status holen
+	this->lastStatusChar = this->csbiInfo.dwCursorPosition.X; 
+
 }
 
 void ConsoleGraphics::jump2Pos(int x, int y) {
@@ -75,7 +86,7 @@ void ConsoleGraphics::jump2Pos(int x, int y) {
 
 bool ConsoleGraphics::verifyCoord(int x, int y) {
 	
-	if (this->breite < x || this->hoehe < y) {
+	if (this->breite < x || this->hoehe - 1 < y) {
 		jump2Pos(0, this->hoehe);
 		printf("Error: coords %i,%i out of borders\t", x, y);
 		return false;
@@ -129,17 +140,26 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 
 void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
 	bool aufwaerts;
-	int targetX, x;
+	int targetX, x = x1;
 	if (m > 0)
 		aufwaerts = true;
 	else
 		aufwaerts = false;
 
 	int actY = y1;
+
 	m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
 	m = m * 2;
 	while (!(actY == y2+1)) {
-		x =  x1+ ((double)actY / m);
+		
+		if (m != 0) {
+			x = x1 + ((double)actY / m);
+		} else if (x1 == x2) {
+			actY += 1;
+		} else {
+			x += 1;
+		}
+		
 		drawPoint(x, actY);
 
 		if (aufwaerts)
@@ -164,18 +184,14 @@ bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
 	for (double i = x1; i <= x2; i++) { // x werte durchgehen und den y wert zeichnen
 		targetY = (m * (i - (double)x1) + (double)y1);
 		
-		if (m > 1 || m < -1) {
-			gap = true;
-		}
-		else {
-			gap = false;
-		}
-		if (gap)
+		if (!(m > 1 || m < -1)) {
+			drawPoint(i, (int)targetY, decideCode(targetY));
+		} else if (x1 == x2) {
+			fillGap(i, prevY, i, y2, m);
+		} else {
 			fillGap(i - 1, prevY, i, targetY, m);
-		else
-			drawPoint(i, (int)targetY , decideCode(targetY));
-
-		//drawPoint(i, (int)targetY);
+		}
+		
 		prevY = targetY;
 	}
 
