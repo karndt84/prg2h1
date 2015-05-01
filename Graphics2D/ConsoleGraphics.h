@@ -14,6 +14,7 @@ public:
 	ConsoleGraphics(int breite, int hoehe);
 	~ConsoleGraphics();	
 	void clear();
+	void clearStatus(void);
 	bool drawPoint(int x, int y);
 	bool undrawPoint(int x, int y);
 	bool drawLine(int x1, int y1, int x2, int y2);

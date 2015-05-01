@@ -6,6 +6,7 @@
 ConsoleGraphics::ConsoleGraphics()
 {
 	initConsole();
+	this->lastStatusChar = 0;
 	bitline = new int*[breite]; // Erstes Array initialisieren
 
 	for (int i = 0; i < breite; i++)
@@ -61,9 +62,14 @@ void ConsoleGraphics::clear() {
 			printf("%c", 0x20);
 		}
 	}
+	clearStatus();
 	jump2Pos(this->lastStatusChar, this->hoehe);
-	for (int i = this->lastStatusChar; i > this->breite; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
-		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY); 
+}
+
+void ConsoleGraphics::clearStatus() {
+	jump2Pos(this->lastStatusChar, this->hoehe);
+	for (int i = this->lastStatusChar; i < this->breite; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
+		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY);
 	}
 }
 
@@ -139,23 +145,28 @@ void ConsoleGraphics::tausch(int* eins, int* zwei) {
 }
 
 void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
-	bool aufwaerts;
+	bool aufwaerts = true;
 	int targetX, x = x1;
-	if (m > 0)
+	int actY = y1, actYreverse = y1, grenze = y2 +1;
+	if (m > 0) {
 		aufwaerts = true;
-	else
+	} else {
 		aufwaerts = false;
-
-	int actY = y1;
+		actYreverse = -actYreverse;
+		grenze = y2 - 1;
+	}
 
 	m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
 	m = m * 2;
-	while (!(actY == y2+1)) {
+	while (!(actYreverse == grenze)) {
 		
 		if (m != 0) {
 			x = x1 + ((double)actY / m);
 		} else if (x1 == x2) {
-			actY += 1;
+			if (aufwaerts)
+				actY += 1;
+			else
+				actY--;
 		} else {
 			x += 1;
 		}
@@ -179,7 +190,7 @@ bool ConsoleGraphics::drawLine(int x1, int y1, int x2, int y2) {
 		tausch(&y1, &y2);
 	}
 	bool gap;
-	int vergleich;
+	
 	double m = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
 	for (double i = x1; i <= x2; i++) { // x werte durchgehen und den y wert zeichnen
 		targetY = (m * (i - (double)x1) + (double)y1);

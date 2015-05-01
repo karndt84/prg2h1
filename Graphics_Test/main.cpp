@@ -40,15 +40,18 @@ int main(void) {
 	
 	bla->printWindowSize();
 	system("PAUSE");
+	bla->clearStatus();
 	bla->clear();
 	//bla->drawLine(2, 2, 70, 10);
-	bla->drawLine(0, 0, 0, 3);
-	bla->drawLine(0, 0, 3, 0);
-	bla->drawLine(3, 3, 70,2);
+	//bla->drawLine(0, 0, 0, 3);
+	//la->drawLine(0, 0, 3, 0);
+	bla->drawLine(0, 20 , 20, 0);
+
 	//bool error = bla->drawLine(2, 2, 79, 4);
 	//error = bla->printString(77, 5, "test");
 
 	system("PAUSE");
+	bla->clearStatus();
 	//bla.~ConsoleGraphics();
 	delete bla;
 
