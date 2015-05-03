@@ -63,14 +63,14 @@ void ConsoleGraphics::clear() {
 		}
 	}
 	clearStatus();
-	jump2Pos(this->lastStatusChar, this->hoehe);
 }
 
 void ConsoleGraphics::clearStatus() {
 	jump2Pos(this->lastStatusChar, this->hoehe);
 	for (int i = this->lastStatusChar; i < this->breite; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
-		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY);
+		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY, true);
 	}
+	jump2Pos(this->lastStatusChar, this->hoehe);
 }
 
 void ConsoleGraphics::printWindowSize(void) {
@@ -102,14 +102,18 @@ bool ConsoleGraphics::verifyCoord(int x, int y) {
 }
 
 bool ConsoleGraphics::drawPoint(int x, int y) {
-	drawPoint(x, y, FULL);
-	return 0;
+	return drawPoint(x, y, FULL);
 }
 
 bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
-	if (!verifyCoord(x, y))
-		return false;
+	return drawPoint(x, y, z, false);
+}
 
+bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z, bool override) {
+	if (!override) {
+		if (!verifyCoord(x, y))
+			return false;
+	}
 	switch (this->bitline[x][y]) // Keine bereits gezeichneten Zeichen überschreiben, ggf. ergänzen
 	{
 		case EMPTY:
@@ -141,7 +145,7 @@ bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z) {
 				return true;
 			break;;
 	}
-
+	
 	int code = 0x20;
 	jump2Pos(x, y);
 	switch (z) {
@@ -194,9 +198,9 @@ void ConsoleGraphics::fillGap(int x1, int y1, int x2, int y2, double m) {
 
 		if (m > 0) { // Laufrichtung 
 			for (int y = yUnten; y <= yOben +1; ++y) {
-				if (y == yOben + 1 && x != x2 - x1)
+				if (y == yOben +1 && x != x2 - x1)
 					drawPoint(x1 + x, y, UPPER);
-				else
+				else if (x != x2 - x1)
 					drawPoint(x1 + x, y);
 			}
 		} else {

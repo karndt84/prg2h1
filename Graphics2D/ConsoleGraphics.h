@@ -32,6 +32,7 @@ private:
 	enum zeichen { EMPTY, UPPER, LOWER, FULL };
 	ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1);
 	bool drawPoint(int x, int y, ConsoleGraphics::zeichen z);
+	bool drawPoint(int x, int y, ConsoleGraphics::zeichen z, bool override);
 	void initConsole();
 	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
 	SMALL_RECT srctWindow;
