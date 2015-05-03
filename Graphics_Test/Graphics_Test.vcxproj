@@ -79,9 +79,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="testfunktionen.cpp" />
     <ClCompile Include="zeichencodes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="testfunktionen.h" />
     <ClInclude Include="zeichencodes.h" />
   </ItemGroup>
   <ItemGroup>

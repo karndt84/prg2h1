@@ -5,10 +5,24 @@
 
 ConsoleGraphics::ConsoleGraphics()
 {
-	initConsole();
 	this->lastStatusChar = 0;
-	this->bitline = new int*[breite +1]; // Erstes Array initialisieren
+	initConsole();
+	initArray();
+}
 
+
+
+ConsoleGraphics::ConsoleGraphics(int breite, int hoehe)
+{
+	this->lastStatusChar = 0,
+	this->breite = breite;
+	this->hoehe = hoehe;
+	initArray();
+}
+
+void ConsoleGraphics::initArray() {
+	this->bitline = new int*[breite + 1]; // Erstes Array initialisieren
+	this->lastStatusChar = 0;
 	for (int i = 0; i <= breite; i++)
 	{
 		this->bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
@@ -18,26 +32,12 @@ ConsoleGraphics::ConsoleGraphics()
 	}
 }
 
-
-
-ConsoleGraphics::ConsoleGraphics(int breite, int hoehe)
-{
-	/*bitline = new int[(breite) * hoehe];
-	for (int i = 0; i < breite * hoehe; i++) {
-		this->bitline[i] = '0x20';
-	}
-	*/
-	bitline = new int*[breite]; // Erstes Array initialisieren
-
-	for (int i = 0; i < breite; i++)
-	{
-		bitline[i] = new int[hoehe]; // Für jedes Arrayfeld des ersten, ein weiteres Array initialisieren
-	}
-}
-
-
 ConsoleGraphics::~ConsoleGraphics()
 {
+	for (int i = 0; i <= breite; i++)
+	{
+		delete[] this->bitline[i];
+	}
 	delete[] this->bitline;
 }
 
@@ -57,9 +57,9 @@ void ConsoleGraphics::initConsole() {
 
 void ConsoleGraphics::clear() {
 	jump2Pos(0, 0);
-	for (int i = 0; i <= this->breite; i++) {
+	for (int i = 0; i < this->breite; i++) {
 		for (int i2 = 0; i2 <= this->hoehe -1; i2++) {
-			printf("%c", 0x20);
+			undrawPoint(i, i2);
 		}
 	}
 	clearStatus();
@@ -67,18 +67,20 @@ void ConsoleGraphics::clear() {
 
 void ConsoleGraphics::clearStatus() {
 	jump2Pos(this->lastStatusChar, this->hoehe);
-	for (int i = this->lastStatusChar; i < this->breite; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
+	for (int i = this->lastStatusChar; i < this->breite -1; i++) { // übrig gebliebene Zeichen auf der Statuszeile entfernen.
 		drawPoint(i, this->hoehe, ConsoleGraphics::EMPTY, true);
 	}
 	jump2Pos(this->lastStatusChar, this->hoehe);
 }
+void ConsoleGraphics::updateLaststatusPosition(void) {
+	GetConsoleScreenBufferInfo(hStdout, &csbiInfo); // aktuellen status holen
+	this->lastStatusChar = this->csbiInfo.dwCursorPosition.X;
+}
 
 void ConsoleGraphics::printWindowSize(void) {
 	jump2Pos(0, this->hoehe);
-	printf("Fenstergroesse: %ix%i", this->breite, this->hoehe);
-	GetConsoleScreenBufferInfo(hStdout, &csbiInfo); // aktuellen status holen
-	this->lastStatusChar = this->csbiInfo.dwCursorPosition.X; 
-
+	printf("Fenstergroesse: %ix%i\t", this->breite, this->hoehe);
+	updateLaststatusPosition();
 }
 
 void ConsoleGraphics::jump2Pos(int x, int y) {
@@ -95,6 +97,7 @@ bool ConsoleGraphics::verifyCoord(int x, int y) {
 	if (this->breite < x || this->hoehe - 1 < y) {
 		jump2Pos(0, this->hoehe);
 		printf("Error: coords %i,%i out of borders\t", x, y);
+		updateLaststatusPosition();
 		return false;
 	}
 	
@@ -117,9 +120,7 @@ bool ConsoleGraphics::drawPoint(int x, int y, ConsoleGraphics::zeichen z, bool o
 	switch (this->bitline[x][y]) // Keine bereits gezeichneten Zeichen überschreiben, ggf. ergänzen
 	{
 		case EMPTY:
-			if (z == EMPTY)
-				return true;
-			else
+			if (z != EMPTY)
 				this->bitline[x][y] = z;
 			break;;
 		case LOWER:
@@ -171,8 +172,7 @@ ConsoleGraphics::zeichen ConsoleGraphics::decideCode(double y1) {
 }
 
 bool ConsoleGraphics::undrawPoint(int x, int y) {
-	drawPoint(x, y, EMPTY);
-	return 0;
+	return drawPoint(x, y, EMPTY);
 }
 
 void ConsoleGraphics::tausch(int* eins, int* zwei) {
@@ -252,6 +252,5 @@ bool ConsoleGraphics::printString(int x, int y, const char text[]) {
 	if (!verifyCoord(x + strlen(text), y)) { return false; }
 	jump2Pos(x, y);
 	printf("%s", text);
-
 	return true;
 }

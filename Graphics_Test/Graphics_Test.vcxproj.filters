@@ -21,9 +21,15 @@
     <ClCompile Include="zeichencodes.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
+    <ClCompile Include="testfunktionen.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="zeichencodes.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="testfunktionen.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>
